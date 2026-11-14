@@ -1,0 +1,75 @@
+*{box-sizing:border-box}
+body{margin:0;background:#1a1c2c;color:#111;font:bold 14px/1.45 "Courier New",monospace}
+header{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#2a2d4a;border-bottom:4px solid #0d0e1a}
+header b{color:#ffd23a;letter-spacing:2px;margin-right:auto}
+button{font:inherit;background:#f8f0d0;color:#222;border:3px solid #222;box-shadow:inset -3px -3px #b8a878,3px 3px #000;padding:8px 12px;cursor:pointer;text-transform:uppercase}
+button:hover:not(:disabled){background:#ffe680}button:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ff5a3a}
+main{max-width:760px;margin:0 auto;padding:12px}
+.box{background:#f8f0d0;color:#222;border:4px solid #222;box-shadow:0 0 0 4px #5a6ab8;padding:14px;margin:6px 4px}
+h2,h3{margin:.2em 0}h3{color:#2a4a98;border-bottom:2px dashed #b8a878;margin-top:1em}
+#f{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{display:flex;flex-direction:column;font-size:12px;gap:2px}
+input,select,textarea{font:inherit;padding:6px;border:3px solid #222;background:#fff;color:#111;min-width:0}
+input::placeholder,textarea::placeholder{color:#4c4c4c;opacity:1}
+@media(max-width:520px){#f{grid-template-columns:1fr}}
+#stage{position:relative;margin:0 4px}
+#cv,.grid img{width:100%;display:block;image-rendering:pixelated;border:4px solid #222}
+#cv{aspect-ratio:160/96}
+.hp{position:absolute;background:#f8f0d0;color:#222;border:3px solid #222;padding:3px 8px;font-size:12px;min-width:38%}
+#eb{top:4%;left:3%}#pb{bottom:5%;right:3%}
+.bar{height:9px;background:#444;border:2px solid #222;margin-top:3px}
+.bar u{display:block;height:100%;width:100%;background:#4ac84a;transition:width .6s,background .6s}
+#dmg span{position:absolute;font-size:24px;color:#fff;text-shadow:2px 2px #c00;animation:up .9s forwards;pointer-events:none}
+@keyframes up{to{transform:translateY(-34px);opacity:0}}
+#txt{min-height:66px;font-size:16px}
+#mv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 4px}
+#mv button small{display:block;font-size:11px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:6px 4px}
+.grid .box{margin:0}.grid button{width:100%;padding:6px}
+.grid p{margin:4px 0;font-size:12px}
+.sil{filter:brightness(0) opacity(.5)}
+#plan ul{padding-left:18px;margin:.3em 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Field Shift expansion — responsive retro-game panels */
+:root{color-scheme:dark}
+body{background:radial-gradient(circle at 50% 0,#3b4e61,#1a1c2c 62%);min-height:100vh}
+header{position:sticky;top:0;z-index:1000;box-shadow:0 5px 0 #0d0e1a}
+header b{font-size:18px}
+header nav{display:flex;gap:6px;flex-wrap:wrap;width:100%;justify-content:center}
+header nav button{padding:5px 9px;font-size:11px}
+#stat{white-space:nowrap}#sync{color:#a8ebb3;font-size:11px}
+main{max-width:1120px;padding:18px}
+main section{animation:pop-in .22s steps(3)}@keyframes pop-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+section[hidden]{display:none!important}
+.box{border-radius:3px;line-height:1.55}
+.hero-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.hero-heading h2{font-size:25px}.hero-heading p{max-width:600px}
+.eyebrow{color:#4268a5;letter-spacing:2px;font-size:11px}.pixel-title{font-size:38px;white-space:nowrap}
+.helper{background:#e7e1c9;padding:8px;display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.helper button{padding:4px 8px;font-size:11px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));gap:17px;margin:15px 5px}
+.crop-card{color:#1f2430;background:#e5e9d8;border:7px solid #73575a;border-radius:6px;box-shadow:5px 6px #0d0e1a;padding:9px;min-height:395px}
+.crop-card h3{font-size:19px;border:0;margin:0 0 5px;color:#3d3f33;display:flex;justify-content:space-between;align-items:center}
+.crop-card h3 small{font-size:10px;color:#556b42}
+.crop-art{border:5px solid #99bea5;background:linear-gradient(#8fd4e6 0 65%,#71a552 65%);display:flex;justify-content:center;align-items:center;min-height:145px}
+.crop-art img{width:128px;height:128px;image-rendering:pixelated;object-fit:contain}
+.crop-meta{font-size:12px;margin:6px 0}.crop-meta strong{color:#395e40}.crop-card .fact{border-top:2px dashed #a4b19a;padding-top:8px;font-size:12px}
+#leaflet-map{height:360px;background:#9cd0d8;border:4px solid #222;z-index:0}
+#map-fallback,.helper,section small{font-size:12px}
+.coords label{flex:1;min-width:130px}.coords input{width:100%}
+#atlas-biomes{display:flex;gap:9px;flex-wrap:wrap}#atlas-biomes button{font-size:11px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.form-grid label{min-width:0}
+#plantings{display:grid;gap:12px;margin:12px 4px}.plant-panel{background:#f8f0d0;color:#222;border:4px solid #222;padding:12px;box-shadow:4px 4px #5a6ab8}
+.plant-panel h3{margin:0}.progress-bar{height:21px;border:3px solid #222;background:#ddd}.progress-bar span{display:block;height:100%;background:repeating-linear-gradient(45deg,#59a34d,#59a34d 10px,#78c46c 10px,#78c46c 20px)}
+.stages{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:10px 0}.stage{border:2px solid #222;background:#e4dec9;padding:5px;text-align:center;font-size:11px}.stage.complete{background:#c0e0b5}.stage.active{background:#ffdc7b}
+.plant-panel form{display:flex;gap:6px;flex-wrap:wrap}.plant-panel input,.plant-panel select{max-width:240px}
+#saved-farms,#saved-plans{display:grid;gap:10px}.saved-item{border:2px dashed #b7aa91;padding:10px}
+#rotation-form{display:grid;gap:10px;max-width:560px}
+#rotation-results{padding-top:12px}#rotation-results ul{margin:5px 0}
+#plan h3{margin-top:13px}
+button:focus-visible{outline-offset:3px}
+@media(max-width:620px){header{position:static}header nav{justify-content:flex-start}.pixel-title{display:none}main{padding:8px}.stages{grid-template-columns:repeat(2,1fr)}#leaflet-map{height:290px}}
+
+.advanced-panel{border-top:2px dashed #b8a878;padding-top:13px;margin-top:15px}.advanced-panel ol{padding-left:23px}.advanced-panel li{margin-bottom:9px}

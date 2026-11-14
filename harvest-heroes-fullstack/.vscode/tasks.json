@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Harvest Heroes",
+      "type": "shell",
+      "command": "python -m uvicorn app.main:app --reload --app-dir backend",
+      "group": {"kind": "build", "isDefault": true},
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Harvest Heroes backend",
+      "type": "shell",
+      "command": "python -m pytest tests -q",
+      "options": {"cwd": "${workspaceFolder}/backend"},
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

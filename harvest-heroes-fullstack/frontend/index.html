@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harvest Heroes — Field Shift</title><link rel="stylesheet" href="/assets/style.css?v=2"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzxBMGL2PWSs8RnZrk3eLQ=" crossorigin=""></head>
+<body>
+<header><b>🌱 HARVEST HEROES</b><span id="stat"></span><span id="sync" aria-live="polite"></span><nav aria-label="Main navigation"><button data-go="start">FARM</button><button data-go="atlas">LOCATION MAP</button><button data-go="cards">CROP CARDS</button><button data-go="tracker">TRACKER</button><button data-go="rotation">ROTATION</button><button data-go="saved">SAVED</button><button data-go="journal">JOURNAL</button></nav></header>
+<main>
+<section id="start" class="box">
+<div class="hero-heading"><div><p class="eyebrow">A PIXEL FARMING ADVENTURE</p><h2>Where will you farm?</h2><p>Choose a farm, face a farming challenge, then unlock an actionable field plan.</p></div><div class="pixel-title" aria-hidden="true">🌾⚔️💧</div></div>
+<form id="f" onsubmit="return false">
+<label>Country<input id="country" placeholder="e.g. Bangladesh" autocomplete="off"></label>
+<label>Region / city (optional)<input id="region" placeholder="e.g. Arizona"></label>
+<label>Biome<select id="biome"></select></label>
+<label>Crop<input id="crop" list="crops" placeholder="e.g. soybean"></label>
+<datalist id="crops"><option>rice<option>wheat<option>dates<option>potatoes<option>cotton<option>corn<option>barley<option>tomatoes<option>soybean<option>oats<option>alfalfa<option>lentil<option>chickpea<option>sorghum<option>cereal_rye_cover</datalist>
+<label>Soil<select id="soil"><option value="clay">Clay<option value="sandy">Sandy<option value="loam">Loam<option value="silt">Silt<option value="peat">Peat</select></label>
+<label>Season<select id="season"><option value="monsoon">Monsoon / wet<option value="summer">Summer<option value="winter">Winter<option value="spring">Spring<option value="autumn">Autumn</select></label>
+<label>Farm size<select id="size"><option value="small">Small plot<option value="medium">Medium farm<option value="large">Large farm</select></label>
+<label>Water<select id="water"><option value="limited">Limited water<option value="rainfed">Rain-fed only<option value="irrigated">Reliable irrigation<option value="waterlogged">Limited drainage</select></label>
+</form>
+<p id="hint" role="status"></p><p id="selected-loc" class="helper">Location pin: not selected — optional. <button type="button" data-go="atlas">CHOOSE ON MAP</button></p>
+<button id="go">START ADVENTURE</button>
+<p><small>Educational simulation; challenges are rules-based, not forecasts. Growth estimates are illustrative. View optional NASA POWER historical observations via the location map.</small></p>
+</section>
+<section id="map" hidden></section>
+<section id="battle" hidden>
+<div id="stage"><canvas id="cv" width="160" height="96"></canvas>
+<div class="hp" id="eb"><b id="en"></b> <small id="et"></small><div class="bar"><u id="eh"></u></div></div>
+<div class="hp" id="pb"><b>FARMER</b><div class="bar"><u id="ph"></u></div></div>
+<div id="dmg"></div></div>
+<div id="txt" class="box"></div><div id="mv"></div>
+</section>
+<section id="plan" hidden class="box"></section>
+<section id="journal" hidden></section>
+<section id="atlas" hidden><div class="box"><h2>Choose your farming location</h2><p>Click the map to place your farm pin, or enter coordinates. The game never needs your exact location.</p><div id="leaflet-map" role="application" aria-label="Interactive world map for choosing farm location"></div><p id="map-fallback">Map tiles need an internet connection. You can always type coordinates below.</p><div class="row coords"><label>Latitude<input id="lat" inputmode="decimal" type="number" min="-90" max="90" step="any" placeholder="e.g. 51.4816"></label><label>Longitude<input id="lon" inputmode="decimal" type="number" min="-180" max="180" step="any" placeholder="e.g. -3.1791"></label></div><div class="row"><button id="use-location">USE MY LOCATION</button><button id="apply-pin">USE THESE COORDINATES</button><button id="nasa">NASA POWER HISTORY</button></div><div id="nasa-result" aria-live="polite"></div></div><div class="box"><h3>Biome stamps</h3><div id="atlas-biomes"></div></div></section>
+<section id="cards" hidden><div class="box"><h2>Crop collector cards</h2><p>Flip through original pixel crop portraits, growing stages, soil information, and rotation tips.</p></div><div id="crop-cards" class="card-grid"></div></section>
+<section id="tracker" hidden><div class="box"><h2>Plant growth tracker</h2><p>Record a planting date, see approximate growth stages and harvest date, and log field work.</p><form id="plant-form" class="form-grid"><label>Saved farm<select id="plant-farm" required></select></label><label>Crop<select id="plant-crop" required></select></label><label>Planting date<input id="plant-date" type="date" required></label><label>Field notes<input id="plant-note" maxlength="500" placeholder="e.g. plot A"></label><button type="submit">START TRACKING</button></form><p id="tracker-feedback" role="status"></p></div><div id="plantings"></div></section>
+<section id="rotation" hidden><div class="box"><h2>Crop rotation planner</h2><p>Choose your current crop and add recent crops separated by commas. Compare crop families and see possible alternatives.</p><form id="rotation-form"><label>Current crop<select id="rotation-crop"></select></label><label>Previously grown crops<input id="rotation-history" placeholder="e.g. tomatoes, potatoes"></label><button type="submit">PLAN ROTATION</button></form><div class="advanced-panel"><h3>🌍 Tsuyu-style climate rotation analysis</h3><p>With a selected map pin, compare three-year sequences using NASA POWER historical weather and SoilGrids topsoil data. Scoring balances soil, water, resilience and yield potential. Remote services must be available.</p><button id="rank-climate">RANK WITH HISTORICAL DATA</button><p id="climate-rotation-results" aria-live="polite"></p></div><div id="rotation-results" aria-live="polite"></div></div></section>
+<section id="saved" hidden><div class="box"><h2>Your saved farm adventures</h2><p>Saved progress lives in the backend database. Keep your private access code to resume on another device.</p><div class="row"><button id="copy-code">COPY MY ACCESS CODE</button><button id="show-code">SHOW / RESTORE CODE</button></div><div id="code-panel" hidden><label>Private access code<input id="access-code" type="password" autocomplete="off" placeholder="Paste your code here"></label><button id="restore-code">RESTORE PROFILE</button></div><p id="saved-status" role="status"></p></div><div class="box"><h3>Saved farms</h3><div id="saved-farms"></div></div><div class="box"><h3>Unlocked field plans</h3><div id="saved-plans"></div></div></section>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script><script src="/assets/script.js"></script><script src="/assets/extra.js"></script>
+</body></html>
