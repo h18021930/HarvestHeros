@@ -1,6 +1,6 @@
 # 🌱 Harvest Heroes — Field Shift
 
-A complete, editable **VS Code** starter application for an educational farming game. It combines the user's original pixel-art **Harvest Heroes** battle system with a Python **FastAPI** backend, an **SQLite** database, collectible crop cards, a location map, field plans, crop rotation suggestions and a planting tracker.
+An editable **VS Code** farming workspace with a preserved pixel-art challenge game. It combines the user's original pixel-art **Harvest Heroes** battle system with a Python **FastAPI** backend, an **SQLite** database, collectible crop cards, a location map, field plans, crop rotation suggestions and a planting tracker.
 
 The referenced GitHub repository’s **`main`** branch contains documentation and a proposed architecture. Its separate **`data_science_tsuyu`** branch contains a working FastAPI agronomic rotation engine. This package builds the game around your uploaded pixel-art frontend and **adapts the Tsuyu-branch methodology and crop matrix** for location-aware rotation scoring (climate suitability, FAO-56 ET0, SoilGrids, crop-family constraints, multi-criteria scores and water/nitrogen/soil-cover implications). It is an independently integrated codebase, not a byte-for-byte copy of Tsuyu’s backend. No GitHub files were changed.
 
@@ -92,3 +92,12 @@ On some Python environments, set `PYTHONPATH=backend` first if `app` cannot be i
 ## Credits
 
 The pixel battle, canvas-based sprites, biome scenes, and original core visuals come from the user's uploaded Harvest Heroes files. The new crops, UI and server implementation were created for this project. The `data_science_tsuyu` branch of `ada-th25/nasa-field-shift-crop-rotation` contributed the agronomic approach and crop parameter values used for the adapted rotation-analysis engine. NASA POWER and ISRIC SoilGrids are optional public remote data sources; OpenStreetMap contributors provide map tiles.
+
+
+## Farmer dashboard, NASA data, instructions, and reset
+
+Open **DASHBOARD** for saved field counts, recent planting activity, and a real NASA POWER historical weather summary for a saved geolocated field. Choose a location in **LOCATION MAP** or select a field that was saved with coordinates. The NASA POWER API is called by the FastAPI backend through `GET /api/environment`, returning recent historical estimates for 2m air temperature and cumulative precipitation. It requires internet access; missing data produces an error rather than fabricated values. These are **not forecasts**, crop-health satellite imagery, or in-field sensor measurements. The climate-based rotation tool already also uses NASA POWER with optional ISRIC SoilGrids estimates.
+
+Use **INSTRUCTIONS** for an in-app walkthrough of mapping, NASA data, field activity logging, rotation advice, gaming, profile recovery and resetting.
+
+Under **SAVED**, choose **RESET GAME PROGRESS** to clear only this profile's battles, unlocked plans, XP and victories. Field definitions, plantings, and field activity logs remain intact. **RESET EVERYTHING** also removes this profile's fields, plantings and events. Both options require two browser confirmations and cannot be undone; they do not delete other players' data. API: authenticated `POST /api/progress/reset?scope=game` or `?scope=all`. Back up important records before resetting.
