@@ -349,4 +349,4 @@ $('#restore-code').onclick=async()=>{
   catch(err){HH.token=old;hhError(err);$('#saved-status').textContent='The access code was not recognized'}
 };
 
-hhPlayer().then(()=>hhLoadCrops()).then(()=>hhRefresh()).catch(hhError);
+hhPlayer().then(()=>hhLoadCrops()).then(()=>hhRefresh()).then(()=>show('dashboard')).catch(hhError);
