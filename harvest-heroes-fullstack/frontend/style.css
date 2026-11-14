@@ -1,6 +1,6 @@
 *{box-sizing:border-box}
 body{margin:0;background:#1a1c2c;color:#111;font:bold 14px/1.45 "Courier New",monospace}
-header{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#2a2d4a;border-bottom:4px solid #0d0e1a}
+header{disgit remote add origin https://github.com/h18021930/HarvestHeros.gitplay:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#2a2d4a;border-bottom:4px solid #0d0e1a}
 header b{color:#ffd23a;letter-spacing:2px;margin-right:auto}
 button{font:inherit;background:#f8f0d0;color:#222;border:3px solid #222;box-shadow:inset -3px -3px #b8a878,3px 3px #000;padding:8px 12px;cursor:pointer;text-transform:uppercase}
 button:hover:not(:disabled){background:#ffe680}button:disabled{opacity:.45;cursor:default}
