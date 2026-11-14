@@ -73,3 +73,11 @@ button:focus-visible{outline-offset:3px}
 @media(max-width:620px){header{position:static}header nav{justify-content:flex-start}.pixel-title{display:none}main{padding:8px}.stages{grid-template-columns:repeat(2,1fr)}#leaflet-map{height:290px}}
 
 .advanced-panel{border-top:2px dashed #b8a878;padding-top:13px;margin-top:15px}.advanced-panel ol{padding-left:23px}.advanced-panel li{margin-bottom:9px}
+
+/* Farmer workspace */
+.farm-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0}
+.farm-metrics>div{background:#e3edda;color:#1e3826;border:3px solid #344b35;padding:14px;display:flex;flex-direction:column;gap:7px}
+.farm-metrics strong{font-size:26px}.farm-metrics span{font-size:12px;text-transform:uppercase;letter-spacing:1px}
+#dashboard-weather{background:#f4f0dd;color:#233727;padding:12px;margin-top:12px;border:2px dashed #7e9976;min-height:50px}
+#dashboard-farm{max-width:600px}#instructions h3{margin-top:20px}#instructions p{line-height:1.65}
+#reset-all{background:#983c32;color:white}#reset-game{background:#b07b24;color:white}
