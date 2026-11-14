@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Harvest Heroes", version="1.0.0", lifespan=lifespan,
-              description="Pixel farming adventures with saved progress and educational farm planning")
+              description="Field management, NASA POWER historical observations, and optional pixel farming challenges")
 origins = [s.strip() for s in os.environ.get("HARVEST_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if s.strip()]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"])
 
@@ -89,6 +89,25 @@ def create_player(data: PlayerCreate):
 @app.get("/api/me")
 def me(user=Depends(player)):
     return {**user, "level": 1 + user["xp"] // 100}
+
+
+@app.post("/api/progress/reset")
+def reset_progress(scope: str = Query(pattern="^(game|all)$"), user=Depends(player)):
+    """Reset only the authenticated profile; game-only retains agronomic records."""
+    with session() as con:
+        uid = user["id"]
+        con.execute("DELETE FROM plans WHERE player_id=?", (uid,))
+        con.execute("DELETE FROM battles WHERE player_id=?", (uid,))
+        con.execute("UPDATE players SET xp=0, wins=0 WHERE id=?", (uid,))
+        if scope == "all":
+            con.execute("DELETE FROM planting_events WHERE player_id=?", (uid,))
+            con.execute("DELETE FROM plantings WHERE player_id=?", (uid,))
+            con.execute("DELETE FROM farms WHERE player_id=?", (uid,))
+    return {
+        "reset": scope, "xp": 0, "wins": 0,
+        "farming_records_preserved": scope == "game",
+        "message": "Game progress reset. Field and crop records retained." if scope == "game" else "All records for this profile were reset."
+    }
 
 
 @app.post("/api/farms", status_code=201)

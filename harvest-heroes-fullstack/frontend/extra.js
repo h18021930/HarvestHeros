@@ -63,7 +63,8 @@ function hhFarmPayload() {
 const hhOriginalShow = show;
 show = function(id) {
   hhOriginalShow(id);
-  ['atlas','cards','tracker','rotation','saved'].forEach(name=>$('#'+name).hidden=name!==id);
+  ['atlas','cards','tracker','rotation','saved','dashboard','instructions'].forEach(name=>$('#'+name).hidden=name!==id);
+  if(id==='dashboard') hhDashboard().catch(hhError);
   if(id==='atlas') hhAtlas();
   if(id==='cards') hhCards();
   if(id==='tracker') hhTracker().catch(hhError);
@@ -288,6 +289,54 @@ async function hhSaved() {
       <ul>${p.actions.map(a=>`<li>${esc(a)}</li>`).join('')}</ul><p>${esc(p.soil_guidance)}</p><p>${esc(p.crop_guidance)}</p><small>${esc(p.disclaimer)}</small></details></div>`;
   }).join(''):'Win a battle to unlock your first saved field plan.';
 }
+/* Practical farmer workspace. NASA POWER observations are obtained only via backend. */
+async function hhDashboard() {
+  await hhPlayer();
+  await hhRefresh();
+  const metrics=$('#dashboard-stats');
+  metrics.innerHTML=`<div><strong>${HH.farms.length}</strong><span>Saved fields</span></div><div><strong>${HH.plantings.length}</strong><span>Planting records</span></div><div><strong>${S.w}</strong><span>Game victories</span></div>`;
+  const select=$('#dashboard-farm');
+  select.innerHTML='<option value="">Choose a saved field with coordinates</option>'+
+    HH.farms.filter(f=>f.lat!==null && f.lon!==null).map(f=>`<option value="${esc(f.id)}">${esc(f.name)} — ${esc(f.region||f.country)}</option>`).join('');
+  if(!select.options.length || select.options.length===1) $('#dashboard-weather').textContent='Add a map pin to a new field in GAME, or use LOCATION MAP to select coordinates.';
+  $('#dashboard-plantings').innerHTML=HH.plantings.length?HH.plantings.slice(0,8).map(p=>
+    `<div class="saved-item"><b>${esc(HH.crops[p.crop]?.name||p.crop)}</b> · Planted ${esc(p.planted_on)} · Approximate harvest ${esc(p.timeline.estimated_harvest)}<p>${p.events.length} logged field activities</p></div>`).join(''):'No plantings yet. Open TRACKER to record a crop.';
+}
+$('#dashboard-nasa').onclick=async()=>{
+  const el=$('#dashboard-weather'),btn=$('#dashboard-nasa');
+  try {
+    await hhPlayer();
+    const farm=HH.farms.find(f=>f.id===$('#dashboard-farm').value);
+    const coords=farm?{lat:farm.lat,lon:farm.lon}:HH.coords;
+    if(coords.lat===null || coords.lon===null)throw new Error('Choose a mapped field or select coordinates in LOCATION MAP.');
+    btn.disabled=true;el.textContent='Connecting to NASA POWER for historical data…';
+    const d=await hhApi(`/environment?lat=${encodeURIComponent(coords.lat)}&lon=${encodeURIComponent(coords.lon)}`);
+    el.innerHTML=`<h4>NASA POWER · ${esc(d.start)} to ${esc(d.end)}</h4>
+      <p><b>Average temperature:</b> ${Number(d.average_temperature_c).toFixed(1)} °C · <b>Rainfall:</b> ${Number(d.total_precipitation_mm).toFixed(1)} mm</p>
+      <p>Valid daily temperature samples: ${Number(d.sample_count)} · Field: ${esc(farm?.name||'Selected map pin')}</p>
+      <small>${esc(d.note)} No invented readings; verify with local observations.</small>`;
+  } catch(err){el.textContent='NASA data unavailable: '+err.message;hhError(err)}
+  finally{btn.disabled=false}
+};
+async function hhReset(scope) {
+  const gameOnly=scope==='game';
+  const warning=gameOnly?
+    'Reset all XP, victories, battles and unlocked plans? Your saved fields and planting/activity records will stay. This cannot be undone.':
+    'PERMANENTLY delete ALL your XP, battles, plans, fields, plantings and field activity logs for this profile? This cannot be undone.';
+  if(!window.confirm(warning))return;
+  if(!window.confirm('Final confirmation: reset '+(gameOnly?'GAME progress only':'EVERYTHING in this profile')+'?'))return;
+  try {
+    await hhPlayer();
+    await hhApi('/progress/reset?scope='+scope,{method:'POST'});
+    S={xp:0,w:0,def:{},st:{},log:[]};save();
+    B=null;HH.battleId=null;HH.farms=[];HH.plans=[];HH.plantings=[];
+    $('#reset-feedback').textContent=gameOnly?'Game progress reset; farming records preserved.':'All profile records reset.';
+    await hhSaved();hhStatus('PROGRESS RESET');
+  } catch(err){$('#reset-feedback').textContent=err.message;hhError(err)}
+}
+$('#reset-game').onclick=()=>hhReset('game');
+$('#reset-all').onclick=()=>hhReset('all');
+
 $('#copy-code').onclick=async()=>{
   try{await hhPlayer();await navigator.clipboard.writeText(HH.token);$('#saved-status').textContent='Access code copied. Store it privately; anyone with this code can access your saved farm data.'}
   catch(e){hhError(e);$('#saved-status').textContent='Copy unavailable. Use SHOW / RESTORE CODE to select your code.'}
@@ -300,4 +349,4 @@ $('#restore-code').onclick=async()=>{
   catch(err){HH.token=old;hhError(err);$('#saved-status').textContent='The access code was not recognized'}
 };
 
-hhPlayer().then(()=>hhLoadCrops()).then(()=>hhRefresh()).catch(hhError);
+hhPlayer().then(()=>hhLoadCrops()).then(()=>hhRefresh()).then(()=>show('dashboard')).catch(hhError);

@@ -51,3 +51,30 @@ def test_catalogue_and_rotation():
         result = client.post("/api/rotation", json={"crop": "potatoes", "history": ["tomatoes"]}).json()
         assert result["previous_same_family"] == ["tomatoes"]
         assert all(item["family"] != "Solanaceae" for item in result["alternatives"])
+
+
+def test_game_only_reset_preserves_fields_and_plantings():
+    with TestClient(app) as client:
+        token = client.post("/api/players", json={"name": "Reset test"}).json()["token"]
+        headers = {"Authorization": "Bearer " + token}
+        other_token = client.post("/api/players", json={"name": "Unaffected"}).json()["token"]
+        other_headers = {"Authorization": "Bearer " + other_token}
+        own = client.post("/api/battles/start", json={"farm": FARM}, headers=headers).json()
+        other = client.post("/api/battles/start", json={"farm": FARM}, headers=other_headers).json()
+        farm_id = own["farm"]["id"]
+        planted = client.post("/api/plantings", json={"farm_id": farm_id, "crop": "soybean", "planted_on": "2026-09-01"}, headers=headers)
+        assert planted.status_code == 201
+        assert client.post("/api/progress/reset?scope=game").status_code == 401
+        assert client.post("/api/progress/reset?scope=invalid", headers=headers).status_code == 422
+        reset = client.post("/api/progress/reset?scope=game", headers=headers)
+        assert reset.status_code == 200 and reset.json()["farming_records_preserved"]
+        assert client.get("/api/me", headers=headers).json()["xp"] == 0
+        assert len(client.get("/api/farms", headers=headers).json()) == 1
+        assert len(client.get("/api/plantings", headers=headers).json()) == 1
+        assert client.post(f"/api/battles/{own['id']}/moves", json={"move": "irrigate"}, headers=headers).status_code == 404
+        assert len(client.get("/api/farms", headers=other_headers).json()) == 1
+        assert client.post(f"/api/battles/{other['id']}/moves", json={"move": "irrigate"}, headers=other_headers).status_code == 200
+        assert client.post("/api/progress/reset?scope=all", headers=headers).status_code == 200
+        assert client.get("/api/farms", headers=headers).json() == []
+        assert client.get("/api/plantings", headers=headers).json() == []
+        assert len(client.get("/api/farms", headers=other_headers).json()) == 1
